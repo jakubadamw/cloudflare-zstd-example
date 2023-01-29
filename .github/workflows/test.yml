@@ -1,0 +1,48 @@
+name: Test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test the thing
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Load .env
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: .github
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          override: true
+          target: wasm32-unknown-unknown
+
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo
+          key: cargo-${{ github.job }}-${{ env.PATH_SLUGIFIED }}-${{ hashFiles('Cargo.lock', 'Cargo.toml') }}
+
+      - name: Rust cache
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: target-${{ runner.os }}-${{ runner.arch }}-${RUST_VERSION}-${{ github.job }}-${PATH_SLUGIFIED}-${{ hashFiles('Cargo.lock', 'Cargo.toml') }}
+
+      - name: Run the tests
+        run: |
+          cargo test --package server
+        env:
+          SERVER_DOMAIN_TO_TEST: cloudflare-zstd-example.jakubw.eu

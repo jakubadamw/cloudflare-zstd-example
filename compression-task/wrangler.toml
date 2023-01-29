@@ -1,0 +1,13 @@
+name = "cloudflare-zstd-example-compression-task"
+type = "javascript"
+main = "build/worker/shim.mjs"
+workers_dev = false
+compatibility_date = "2023-01-29"
+
+[[queues.consumers]]
+queue = "cloudflare-zstd-example-compression-queue"
+dead_letter_queue = "cloudflare-zstd-example-dead-letter-queue"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "cloudflare-zstd-example-bucket"

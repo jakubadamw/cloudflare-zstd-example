@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "common",
+    "compression-task",
+    "server"
+]
+
+[workspace.dependencies]
+worker = { git = "https://github.com/jakubadamw/workers-rs.git", rev = "7357b08e0273c0d11224a576cdc4229d1e73b055", features = ["queue"] }
